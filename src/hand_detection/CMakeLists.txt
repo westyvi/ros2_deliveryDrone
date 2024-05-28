@@ -38,12 +38,12 @@ install(TARGETS
 ament_python_install_package(${PROJECT_NAME})
 
 install(PROGRAMS
-  scripts/hand_tracker_node.py
+  hand_detection/hand_tracker_node.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
 install(
-  DIRECTORY scripts/resources
+  DIRECTORY hand_detection/resources
   DESTINATION lib/${PROJECT_NAME}
 )
 
