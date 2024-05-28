@@ -7,6 +7,10 @@ import mediapipe as mp
 import cv2
 from cv_bridge import CvBridge
 from hand_detection.mpDraw import draw_landmarks_on_image as MPDraw
+from mediapipe.tasks import python
+from mediapipe.tasks.python import vision
+import numpy as np
+import os
 
 class HandTrackerNode(Node):
     def __init__(self):
@@ -18,19 +22,28 @@ class HandTrackerNode(Node):
             10)
         self.publisher = self.create_publisher(Image, '/processed_frames', 10)
         self.bridge = CvBridge()
-        self.mp_hands = mp.solutions.hands
-        self.hands = self.mp_hands.Hands()
+
+        # Create a HandLandmarker object.
+        package_path = os.path.dirname(__file__)
+        model_path = os.path.join(package_path, 'resources', 'hand_landmarker.task')
+        base_options = python.BaseOptions(model_asset_path=model_path)
+        options = vision.HandLandmarkerOptions(base_options=base_options,
+                                            num_hands=1)
+        self.detector = vision.HandLandmarker.create_from_options(options)
+
 
     def listener_callback(self, msg):
+        # load input frame
         frame = self.bridge.imgmsg_to_cv2(msg, 'bgr8')
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        results = self.hands.process(frame_rgb)
+        
+        # Detect hand landmarks from the input image.
+        detection_result = self.detector.detect(frame_rgb)
 
-        if results.multi_hand_landmarks:
-            for hand_landmarks in results.multi_hand_landmarks:
-                self.mp_hands.draw_landmarks(frame, hand_landmarks, self.mp_hands.HAND_CONNECTIONS)
+        # draw landmarks over original image
+        annotated_image = MPDraw(frame_rgb.numpy_view(), detection_result)
 
-        processed_frame_msg = self.bridge.cv2_to_imgmsg(frame, 'bgr8')
+        processed_frame_msg = self.bridge.cv2_to_imgmsg(annotated_image, 'bgr8')
         self.publisher.publish(processed_frame_msg)
 
 def main(args=None):
