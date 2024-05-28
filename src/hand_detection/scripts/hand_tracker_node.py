@@ -33,17 +33,20 @@ class HandTrackerNode(Node):
 
 
     def listener_callback(self, msg):
-        # load input frame
+        # load input frame and convert to mediapipe image formate
         frame = self.bridge.imgmsg_to_cv2(msg, 'bgr8')
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        
+        mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame_rgb)
+
         # Detect hand landmarks from the input image.
-        detection_result = self.detector.detect(frame_rgb)
+        detection_result = self.detector.detect(mp_image)
 
         # draw landmarks over original image
-        annotated_image = MPDraw(frame_rgb.numpy_view(), detection_result)
+        annotated_image = MPDraw(mp_image.numpy_view(), detection_result)
 
-        processed_frame_msg = self.bridge.cv2_to_imgmsg(annotated_image, 'bgr8')
+        # convert from mp format to cv2 format to ros formate
+        cv2_formatted_img = cv2.cvtColor(annotated_image, cv2.COLOR_RGB2BGR)
+        processed_frame_msg = self.bridge.cv2_to_imgmsg(cv2_formatted_img, 'bgr8')
         self.publisher.publish(processed_frame_msg)
 
 def main(args=None):
