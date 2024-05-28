@@ -8,7 +8,7 @@ public:
     VideoDisplayNode() : Node("video_display_node") {
         // Create a subscription to the "video_frames" topic with a queue size of 10
         subscription_ = this->create_subscription<sensor_msgs::msg::Image>(
-            "video_frames", 10, std::bind(&VideoDisplayNode::topic_callback, this, std::placeholders::_1)
+            "processed_frames", 10, std::bind(&VideoDisplayNode::topic_callback, this, std::placeholders::_1)
         );
 
         // Create an OpenCV window to display the video frames

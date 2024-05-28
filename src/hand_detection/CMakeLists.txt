@@ -16,23 +16,11 @@ find_package(OpenCV REQUIRED)
 find_package(geometry_msgs REQUIRED)  # added for Point32
 find_package(std_msgs REQUIRED)       # added for custom message Header
 
-# Add message generation (deprecated: was for the bazel build i think?)
-#find_package(rosidl_default_generators REQUIRED)
-#rosidl_generate_interfaces(${PROJECT_NAME}
-#  "msg/HandKeypoints.msg"
-#)
-
-
 ## cpp nodes
 # Add executable for the video capture node
 add_executable(video_capture_node src/video_capture_node.cpp)
 ament_target_dependencies(video_capture_node rclcpp sensor_msgs cv_bridge)
 target_link_libraries(video_capture_node ${OpenCV_LIBRARIES})
-
-# Add executable for the hand detection node
-#add_executable(hand_detection_node src/hand_detection_node.cpp)
-#ament_target_dependencies(hand_detection_node rclcpp sensor_msgs cv_bridge geometry_msgs std_msgs)
-#target_link_libraries(hand_detection_node ${OpenCV_LIBRARIES})
 
 # Add executable for the video display node
 add_executable(video_display_node src/video_display_node.cpp)

@@ -2,7 +2,7 @@ import mediapipe as mp
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 import cv2
-from mpDraw import draw_landmarks_on_image as MPDraw
+from hand_detection.mpDraw import draw_landmarks_on_image as MPDraw
 import numpy as np
 
 # define paths and plotting variables
