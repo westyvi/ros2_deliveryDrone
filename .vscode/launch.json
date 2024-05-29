@@ -1,0 +1,30 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "ROS: Launch hand tracker node",
+            "type": "ros",
+            "request": "launch",
+            "target": "${workspaceFolder}/src/hand_detection/launch/hand_tracker_launch.py",
+            "preLaunchTask": "make_debug",
+        },
+        {
+            "name": "Python: ROS2 hand tracker node",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/hand_detection/launch/handTracker_launch.yaml",
+            "args": [],
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/install/hand_detection/local/lib/python3.10/dist-packages",
+                "AMENT_PREFIX_PATH": "${workspaceFolder}/install",
+                "LD_LIBRARY_PATH": "${workspaceFolder}/install/lib",
+                "PATH": "${env:PATH}:${workspaceFolder}/install/bin"
+            },
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}"
+        },
+    ]
+}

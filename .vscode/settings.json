@@ -1,0 +1,15 @@
+{
+    "ros.distro": "humble",
+    "python.autoComplete.extraPaths": [
+        "/home/westyvi/ros2_deliveryDrone/install/my-test-package/lib/python3.10/site-packages",
+        "/home/westyvi/ros2_deliveryDrone/install/hand_detection/local/lib/python3.10/dist-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/home/westyvi/ros2_deliveryDrone/install/my-test-package/lib/python3.10/site-packages",
+        "/home/westyvi/ros2_deliveryDrone/install/hand_detection/local/lib/python3.10/dist-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ]
+}

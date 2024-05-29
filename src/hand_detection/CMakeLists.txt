@@ -15,6 +15,7 @@ find_package(cv_bridge REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(geometry_msgs REQUIRED)  # added for Point32
 find_package(std_msgs REQUIRED)       # added for custom message Header
+find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 
 ## cpp nodes
 # Add executable for the video capture node
@@ -45,6 +46,12 @@ install(PROGRAMS
 install(
   DIRECTORY hand_detection/resources
   DESTINATION lib/${PROJECT_NAME}
+)
+
+# Install launch files.
+install(DIRECTORY
+  launch
+  DESTINATION share/${PROJECT_NAME}/
 )
 
 if(BUILD_TESTING)

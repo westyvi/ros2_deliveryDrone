@@ -2,7 +2,6 @@
 # Node to track hand landmarks and determine if an open palm is present given a ros image
 # If no hand detected at all or if the hand is not an open palm, publishes false to openPalm_detection topic
 # If there is a hand in frame AND it is an open palm, publishes true
-#
 
 import rclpy
 from rclpy.node import Node
@@ -16,6 +15,8 @@ from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 import numpy as np
 import os
+from builtin_interfaces.msg import Time # FIXME do I need this? What's it do?
+import time
 
 class HandTrackerNode(Node):
     def __init__(self):
@@ -28,24 +29,43 @@ class HandTrackerNode(Node):
         self.img_publisher = self.create_publisher(Image, '/processed_frames', 10)
         self.bool_publisher = self.create_publisher(Bool, '/openPalm_detection', 10)
         self.bridge = CvBridge()
+        self.start_time = time.time() # FIXME does this actually match the ros time object so the first image is ~0s?
 
         # Create a HandLandmarker object.
         package_path = os.path.dirname(__file__)
         model_path = os.path.join(package_path, 'resources', 'hand_landmarker.task')
-        base_options = python.BaseOptions(model_asset_path=model_path)
+        
+        # livestream insertion (do I need 'python' module in this like the image code?)
+        BaseOptions = mp.tasks.BaseOptions
+        HandLandmarker = mp.tasks.vision.HandLandmarker
+        HandLandmarkerOptions = mp.tasks.vision.HandLandmarkerOptions
+        VisionRunningMode = mp.tasks.vision.RunningMode
+        options = HandLandmarkerOptions(
+            base_options=BaseOptions(model_asset_path=model_path),
+            num_hands=1,
+            running_mode=VisionRunningMode.VIDEO)
+        self.detector = HandLandmarker.create_from_options(options)
+
+        
+        # old image only code
+        '''base_options = python.BaseOptions(model_asset_path=model_path)
         options = vision.HandLandmarkerOptions(base_options=base_options,
                                             num_hands=1)
         self.detector = vision.HandLandmarker.create_from_options(options)
-
+'''
 
     def listener_callback(self, msg):
         # load input frame and convert to mediapipe image format
         frame = self.bridge.imgmsg_to_cv2(msg, 'bgr8')
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame_rgb)
+        time_obj = msg.header.stamp
+        timestamp = (time_obj.sec + time_obj.nanosec/1e9) # FIXME might be nsec. Also is there a function for this instead?
+        timestamp_ms = (timestamp)*1e3
+        timestamp_ms = int(timestamp_ms)
 
         # Detect hand landmarks from the input image.
-        detection_result = self.detector.detect(mp_image)
+        detection_result = self.detector.detect_for_video(mp_image, timestamp_ms)
 
         # publish annotated image: draw landmarks, convert from mp -> cv2 -> ros_img format, publish
         annotated_image = MPDraw(mp_image.numpy_view(), detection_result)
