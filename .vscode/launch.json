@@ -5,26 +5,22 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "ROS: Launch hand tracker node",
+            // ensure that ROS2.humble at the bottom of VSCode (in a banner) has a check, not an X. If not, do cmd+shift+p 
+            // type in ROS, and select ROS run. At this point, running this configuration in the 'run and debug' tab in vscode should work!
+            "name": "ROS: Debug hand tracker node",
             "type": "ros",
             "request": "launch",
             "target": "${workspaceFolder}/src/hand_detection/launch/hand_tracker_launch.py",
             "preLaunchTask": "make_debug",
         },
         {
-            "name": "Python: ROS2 hand tracker node",
-            "type": "debugpy",
+            // ensure that ROS2.humble at the bottom of VSCode (in a banner) has a check, not an X. If not, do cmd+shift+p 
+            // type in ROS, and select ROS run. At this point, running this configuration in the 'run and debug' tab in vscode should work!
+            "name": "ROS: Debug video capture node",
+            "type": "ros",
             "request": "launch",
-            "program": "${workspaceFolder}/src/hand_detection/launch/handTracker_launch.yaml",
-            "args": [],
-            "env": {
-                "PYTHONPATH": "${workspaceFolder}/install/hand_detection/local/lib/python3.10/dist-packages",
-                "AMENT_PREFIX_PATH": "${workspaceFolder}/install",
-                "LD_LIBRARY_PATH": "${workspaceFolder}/install/lib",
-                "PATH": "${env:PATH}:${workspaceFolder}/install/bin"
-            },
-            "console": "integratedTerminal",
-            "cwd": "${workspaceFolder}"
+            "target": "${workspaceFolder}/src/hand_detection/launch/video_capture_launch.py",
+            "preLaunchTask": "make_debug",
         },
     ]
 }

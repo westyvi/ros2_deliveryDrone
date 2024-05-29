@@ -30,6 +30,10 @@ private:
         if (!frame.empty()) {
             // Convert the OpenCV image (cv::Mat) to a ROS2 Image message using cv_bridge
             auto msg = cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", frame).toImageMsg();
+
+            // Set the timestamp in the message header
+            msg->header.stamp = this->now();
+
             // Publish the Image message
             publisher_->publish(*msg);
         }
